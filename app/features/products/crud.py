@@ -77,9 +77,6 @@ async def update_product(db: AsyncSession, product_id: int, update_data: PrUpdat
         
         updated = update_data.model_dump(exclude_unset=True)
 
-        if 'price' in updated and updated['price'] is not None:
-            updated['price'] = int(updated['price'] * 100)
-
         if 'image_path' in updated:
             if updated['image_path'] and not check_media_file_exists(updated['image_path']):
                 updated['image_path'] = None

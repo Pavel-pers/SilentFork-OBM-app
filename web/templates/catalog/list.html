@@ -9,18 +9,10 @@
     {% for product in products %}
     <div class="product-card">
         <div class="product-image">
-            {% if product.image_path %}
-            <img src="/media/{{ product.image_path }}"
+            <img src="{{ product.image_url }}"
                  alt="Фото {{ product.name }}"
                  class="product-image-img"
-                 onerror="this.onerror=null; this.src='/media/no_image_data.jpg';">
-            {% else %}
-            <div class="no-image-placeholder">
-                <img src="/media/no_image_data.jpg"
-                     alt="Нет фото"
-                     class="product-image-img">
-            </div>
-            {% endif %}
+                 loading="lazy">
         </div>
 
         <div class="product-body">

@@ -60,7 +60,7 @@ class Order(Base):
             cls,
             user_id: int,
             order_email: str,
-            total_price: int,
+            total_price: Decimal,
             address: str
     ) -> Order:
         """Создает пользователя с автоматическим шифрованием данных"""

@@ -60,6 +60,16 @@ class CartCRUD:
         ).options(selectinload(CartItem.product))
         result = await db.execute(stmt)
         return result.scalar_one_or_none()
+
+    @staticmethod
+    async def get_cart_item_by_product(db: AsyncSession, user_id: int, product_id: int) -> Optional[CartItem]:
+        cart = await CartCRUD.get_or_create_cart(db, user_id)
+        stmt = select(CartItem).where(
+            CartItem.cart_id == cart.cart_id,
+            CartItem.product_id == product_id
+        ).options(selectinload(CartItem.product))
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
     
     @staticmethod
     async def update_cart_item(db: AsyncSession, user_id: int, cart_item_id: int, quantity: int) -> Optional[CartItem]:

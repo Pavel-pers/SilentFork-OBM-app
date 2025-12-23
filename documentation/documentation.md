@@ -133,3 +133,8 @@
 - развернуть приложение в облаке/на виртуалке (Nginx + Docker Compose).
 - оформить README с инструкциями по запуску (локальному и в проде).
 - собрать достижения команды (кто что сделал, какие блоки закрывал), оформить документ в `final_project` для защиты.
+
+## Недавние изменения (23.12.2024)
+- Выровнены карточки каталога: единый контейнер для изображений и работающий плейсхолдер (web/templates/catalog/list.html, web/static/css/styles.css).
+- Приведена работа с ценами к десятичным значениям без умножения/деления на 100; API корзины теперь возвращает числа для фронтенда и проверяет суммарное количество в корзине (app/models/product.py, app/features/products/schemas.py, app/features/products/crud.py, app/features/cart/router.py, app/features/cart/crud.py).
+- Исправлены тесты под шифрование данных пользователя и фактическую логику авторизации, добавлена зависимость aiosqlite для локального тестового окружения (tests/test_auth.py, requirements.txt). Запуск: `DATABASE_URL=sqlite+aiosqlite:///./test.db .venv/bin/pytest -q`.

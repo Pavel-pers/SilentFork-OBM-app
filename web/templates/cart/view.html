@@ -58,7 +58,7 @@ function renderCart(data) {
         html += `
             <tr>
                 <td>${item.name}</td>
-                <td>${item.price} руб</td>
+                <td>${item.price.toFixed(2)} руб</td>
                 <td>
                     <input type="number" value="${item.quantity}" min="1" 
                            data-item-id="${item.cart_item_id}" class="cart-quantity">

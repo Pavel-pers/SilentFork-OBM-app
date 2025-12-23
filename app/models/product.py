@@ -34,7 +34,7 @@ class Product(Base):
     dimensions: Mapped[str | None] = mapped_column(String(255))
 
     unit: Mapped[str] = mapped_column(String(32), nullable=False)
-    price: Mapped[int] = mapped_column(Numeric(12, 2), nullable=False)
+    price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
 
     quantity_available: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 

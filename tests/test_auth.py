@@ -22,7 +22,7 @@ class TestAuthService:
         """Проверяет успешную аутентификацию пользователя."""
         from app.models.user import User
 
-        user = User(
+        user = User.create_with_encryption(
             email="test@example.com",
             first_name="Test",
             last_name="User",
@@ -46,6 +46,19 @@ class TestAuthService:
     async def test_authenticate_user_wrong_password(self, db):
         """Проверяет аутентификацию с неправильным паролем."""
         service = AuthService()
+        from app.models.user import User
+
+        user = User.create_with_encryption(
+            email="test@example.com",
+            first_name="Test",
+            last_name="User",
+            phone="+7 999 123-45-67",
+            password_hash="$2b$12$testhash123",
+            role=UserRole.CLIENT
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
 
         with patch('app.features.auth.service.verify_password', return_value=False):
             with pytest.raises(HTTPException) as exc_info:
@@ -241,7 +254,8 @@ class TestRegistrationAPI:
                 first_name="Новый",
                 last_name="Пользователь",
                 phone="+7 999 222-33-44",
-                password="TestPassword123"
+                password="TestPassword123",
+                password_confirm="TestPassword123"
             )
 
             with patch('app.features.auth.router.hash_password') as mock_hash:
@@ -264,19 +278,12 @@ class TestPasswordSecurity:
         """Проверяет хеширование и проверку паролей."""
         from app.core.security import hash_password, verify_password
 
-        with patch('app.core.security._pwd.hash') as mock_hash, \
-                patch('app.core.security._pwd.verify') as mock_verify:
-            password = "MySecurePassword123!"
-            hashed_value = "$2b$12$mockedhash123"
+        password = "MySecurePassword123!"
+        result_hash = hash_password(password)
 
-            mock_hash.return_value = hashed_value
-            mock_verify.return_value = True
-
-            result_hash = hash_password(password)
-            assert result_hash == hashed_value
-
-            result_verify = verify_password(password, result_hash)
-            assert result_verify is True
+        assert result_hash != password
+        assert verify_password(password, result_hash) is True
+        assert verify_password("wrong-password", result_hash) is False
 
 
 @pytest.mark.asyncio
@@ -287,9 +294,10 @@ class TestAuthIntegration:
         """Проверяет создание пользователя и поиск по email."""
         from app.models.user import User
         from sqlalchemy import select
+        from app.core.encryption import encryption_service
 
         test_email = "integration_test@example.com"
-        user = User(
+        user = User.create_with_encryption(
             first_name="Интеграция",
             last_name="Тест",
             phone="+7 777 777-77-77",
@@ -302,7 +310,7 @@ class TestAuthIntegration:
         await db.commit()
         await db.refresh(user)
 
-        stmt = select(User).where(User.email == test_email)
+        stmt = select(User).where(User.email_hash == encryption_service.hash_email(test_email))
         result = await db.execute(stmt)
         found_user = result.scalar_one_or_none()
 
@@ -314,8 +322,9 @@ class TestAuthIntegration:
         """Проверяет что поиск несуществующего пользователя возвращает None."""
         from sqlalchemy import select
         from app.models.user import User
+        from app.core.encryption import encryption_service
 
-        stmt = select(User).where(User.email == "nonexistent@example.com")
+        stmt = select(User).where(User.email_hash == encryption_service.hash_email("nonexistent@example.com"))
         result = await db.execute(stmt)
         user = result.scalar_one_or_none()
         assert user is None
