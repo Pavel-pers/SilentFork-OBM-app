@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Request, Form
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Query, Request, Form
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -8,6 +8,7 @@ from app.infra.templates import templates
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 import traceback
 
+from app.infra.email import send_password_changed_notification
 from app.features.auth.dependencies import (
     get_current_active_user,
     get_current_staff
@@ -61,6 +62,7 @@ async def change_password_page(
 @router.post("/change-password")
 async def change_my_password(
         request: Request,
+        background_tasks: BackgroundTasks,
         password_data: Optional[ChangePasswordRequest] = None,
         current_user: User = Depends(get_current_active_user),
         db: AsyncSession = Depends(get_db),
@@ -139,6 +141,9 @@ async def change_my_password(
 
         await db.commit()
         await db.refresh(current_user)
+
+        if current_user.email:
+            background_tasks.add_task(send_password_changed_notification, current_user.email)
 
         if is_api_request:
             return {"message": "Пароль успешно изменен"}

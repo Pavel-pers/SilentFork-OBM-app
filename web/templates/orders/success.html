@@ -7,7 +7,11 @@
     <div class="success-page">
         <h2>Заказ успешно оформлен!</h2>
         <p class="string"><strong>Номер заказа:</strong> {{ order_id }}</p>
+        {% if smtp_enabled %}
         <p class="string">Письмо с подтверждением заказа отправлено на {{ order_email }}</p>
+        {% else %}
+        <p class="string">SMTP не настроен — письмо не отправлено. Email заказа: {{ order_email }}</p>
+        {% endif %}
         <p class="string">Мы свяжемся с вами в течение часа.</p>
     </div>
 
