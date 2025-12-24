@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Панель работника{% endblock %}
+
+{% block content %}
+<h2>Панель работника</h2>
+<div class="list-group">
+    <a class="list-group-item list-group-item-action" href="/staff/products/stock">Изменить сток</a>
+    <a class="list-group-item list-group-item-action" href="/staff/products/new">Добавить товар</a>
+    <a class="list-group-item list-group-item-action" href="/staff/products">Таблица товаров</a>
+</div>
+{% endblock %}

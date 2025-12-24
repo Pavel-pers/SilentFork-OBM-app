@@ -91,8 +91,10 @@ async def login_redirect(
         login_data = UserLogin(email=email, password=password)
         token_data = await login_json(login_data, db)
 
+        target_url = "/staff" if token_data.role == "STAFF" else "/products/catalog"
+
         response = RedirectResponse(
-            url="/products/catalog",
+            url=target_url,
             status_code=303
         )
         response.set_cookie(

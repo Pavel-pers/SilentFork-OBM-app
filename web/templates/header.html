@@ -4,5 +4,8 @@
         <a href="/products/catalog">Каталог</a>
         <a href="{{ '/profile' if user else '/auth/login' }}">Мой Профиль</a>
         <a href="{{ '/cart' if user else '/auth/login' }}">Корзина</a>
+        {% if user and (user.role == 'STAFF' or (user.role and user.role.value == 'STAFF')) %}
+        <a href="/staff">Панель</a>
+        {% endif %}
     </nav>
 </div>

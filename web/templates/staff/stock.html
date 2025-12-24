@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Изменение стока{% endblock %}
+
+{% block content %}
+<h2>Изменение стока</h2>
+
+{% if message %}
+<div class="alert alert-success">{{ message }}</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="mb-4">
+    <div class="mb-3">
+        <label class="form-label">Товар</label>
+        <select name="product_id" class="form-select" required>
+            <option value="" disabled {% if not current_product_id %}selected{% endif %}>Выберите товар</option>
+            {% for product in products %}
+            <option value="{{ product.product_id }}"
+                {% if current_product_id and current_product_id == product.product_id %}selected{% endif %}>
+                [{{ product.product_id }}] {{ product.name }} (остаток: {{ product.quantity_available }})
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Операция</label>
+        <select name="operation" class="form-select" required>
+            <option value="in" {% if current_operation == 'in' %}selected{% endif %}>Приход</option>
+            <option value="out" {% if current_operation == 'out' %}selected{% endif %}>Расход</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Дельта</label>
+        <input type="number" name="delta" class="form-control" min="1" required
+               value="{{ current_delta or 1 }}">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Выполнить</button>
+</form>
+{% endblock %}

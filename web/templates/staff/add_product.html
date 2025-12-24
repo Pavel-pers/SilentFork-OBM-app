@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить товар{% endblock %}
+
+{% block content %}
+<h2>Добавить товар</h2>
+
+{% if message %}
+<div class="alert alert-success">{{ message }}</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="row g-3">
+    <div class="col-md-6">
+        <label class="form-label">Название</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Производитель</label>
+        <input type="text" name="manufacturer" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Размеры</label>
+        <input type="text" name="dimensions" class="form-control" placeholder="например, 10x20">
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Единица измерения</label>
+        <input type="text" name="unit" class="form-control" required placeholder="шт, м2, кг">
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Цена (руб)</label>
+        <input type="number" name="price" class="form-control" step="0.01" min="0" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Количество на складе</label>
+        <input type="number" name="quantity_available" class="form-control" min="0" value="0" required>
+    </div>
+    <div class="col-12">
+        <label class="form-label">Фото товара</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </div>
+</form>
+{% endblock %}
