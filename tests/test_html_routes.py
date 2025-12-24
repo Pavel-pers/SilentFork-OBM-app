@@ -33,3 +33,11 @@ async def test_cart_page_renders(async_app_client):
     response = await client.get("/cart/")
     assert response.status_code == 200
     assert "Корзина" in response.text or "Корзины" in response.text
+
+
+@pytest.mark.asyncio
+async def test_root_redirects_to_catalog(async_app_client):
+    client, _ = async_app_client
+    response = await client.get("/", follow_redirects=True)
+    assert response.status_code == 200
+    assert "Каталог строительных материалов" in response.text

@@ -1,16 +1,10 @@
 from pathlib import Path
-from typing import Optional
 
-from fastapi import FastAPI, Request, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.infra.db import get_db
 from app.core.settings import settings
-from app.features.auth.dependencies import get_optional_user
-from app.models.user import User
 
 
 def create_app() -> FastAPI:
@@ -24,8 +18,9 @@ def create_app() -> FastAPI:
     media_dir.mkdir(parents=True, exist_ok=True)
     app.mount("/media", StaticFiles(directory=str(media_dir)), name="media")
 
-    templates_dir = Path(__file__).parent.parent / "web" / "templates"
-    templates = Jinja2Templates(directory=str(templates_dir))
+    @app.get("/", include_in_schema=False)
+    async def index():
+        return RedirectResponse(url="/products/catalog")
 
     @app.get("/health")
     async def health():
