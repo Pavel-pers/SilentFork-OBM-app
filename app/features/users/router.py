@@ -32,9 +32,9 @@ async def profile_page(
         current_user: User = Depends(get_current_active_user)
 ):
     return templates.TemplateResponse(
+        request,
         "users/profile.html",
         {
-            "request": request,
             "user": current_user
         }
     )
@@ -48,9 +48,9 @@ async def change_password_page(
         message: Optional[str] = None
 ):
     return templates.TemplateResponse(
+        request,
         "users/change_password.html",  # создайте этот файл в templates/
         {
-            "request": request,
             "user": current_user,
             "error": error,
             "message": message

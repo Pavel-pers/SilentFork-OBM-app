@@ -23,7 +23,7 @@ async def check_product_availability(db: AsyncSession, product_id: int, required
 
 @router.get("/", response_class=HTMLResponse)
 async def cart_page(req: Request, user: User | None = Depends(get_optional_user)):
-    return templates.TemplateResponse("cart/view.html", {"request": req, "user": user})
+    return templates.TemplateResponse(req, "cart/view.html", {"user": user})
 
 
 @router.get("/api")

@@ -1,0 +1,38 @@
+.add-to-cart {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #9263b3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px !important;
+}
+
+.add-to-cart:hover {
+    background-color: #784899;
+}
+
+.btn-custom {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #9263b3;
+    color: white;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 15px !important;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.btn-custom:hover {
+    background-color: #7e3e9c !important;
+}
+
+a.btn-custom {
+    text-decoration: none;
+    margin-top: 15px;
+    display: inline-block;
+}

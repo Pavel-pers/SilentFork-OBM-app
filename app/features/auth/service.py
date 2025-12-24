@@ -1,11 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException, status
-from app.core.security import verify_password
+from app.core.security import verify_password, decode_access_token
 from app.core.encryption import encryption_service
 from app.models.user import User
 
 class AuthService:
+    def __str__(self) -> str:
+        return f"<AuthService>"
+
     async def authenticate_user(
             self,
             db: AsyncSession,
@@ -29,5 +32,14 @@ class AuthService:
             )
 
         return user
+
+    def verify_token(self, token: str) -> dict:
+        try:
+            return decode_access_token(token)
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Неверные учетные данные"
+            )
 
 auth_service = AuthService()

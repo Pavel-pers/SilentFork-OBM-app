@@ -27,6 +27,8 @@ swagger (если нужен): http://localhost:8000/docs
 3) запуск только health
 - docker compose exec -e DATABASE_URL=postgresql+asyncpg://app:app@db:5432/app_test web pytest -q tests/test_health.py
 
+Pytest уже настроен на проверку покрытия (см. pytest.ini) и падает, если покрытие кода каталога `app` ниже 65%.
+
 ## ЕСЛИ ЧТО-ТО МЕНЯЕТЕ В КОДЕ НУЖНО ПЕРЕЗАПУСКАТЬ ДОКЕР ДЛЯ АКТУАЛЬНОСТИ РАБОТЫ ВАШЕГО СЕРВЕРА:
 docker compose up -d --build
 ---

@@ -44,7 +44,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    password_confirm: str
+    password_confirm: Optional[str] = None
     role: Optional[str] = "CLIENT"
 
     @field_validator('role')
@@ -73,6 +73,8 @@ class UserCreate(UserBase):
 
     @model_validator(mode='after')
     def validate_passwords_match(self):
+        if self.password_confirm is None:
+            self.password_confirm = self.password
         if self.password != self.password_confirm:
             raise ValueError('Пароли не совпадают')
         return self

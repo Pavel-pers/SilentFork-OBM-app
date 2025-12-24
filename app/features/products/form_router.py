@@ -23,8 +23,11 @@ async def catalog_page(
     for product in products:
         product.image_url = get_media_url(product.image_path)
 
-    return templates.TemplateResponse("catalog/list.html", {
-        "request": request,
-        "products": products,
-        "user": user
-    })
+    return templates.TemplateResponse(
+        request,
+        "catalog/list.html",
+        {
+            "products": products,
+            "user": user,
+        },
+    )

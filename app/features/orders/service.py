@@ -1,15 +1,16 @@
-﻿from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-from decimal import Decimal
+﻿from decimal import Decimal
 import logging
 
-from app.models.order import Order
-from app.models.order_item import OrderItem
-from app.models.user import User
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.models.cart import Cart
 from app.models.cart_item import CartItem
+from app.models.order import Order
+from app.models.order_item import OrderItem
 from app.models.product import Product
+from app.models.user import User
 
 log = logging.getLogger(__name__)
 
@@ -30,14 +31,14 @@ async def create_simple_order(db: AsyncSession, order_email: str, phone: str, ad
     if not cart.items:
         raise ValueError("Корзина пуста")
 
-    total_price = Decimal('0.0')
+    total_price = Decimal("0.0")
     order_items = []
 
     for cart_item in cart.items:
         product = cart_item.product
         required_quantity = cart_item.quantity
 
-        if hasattr(product, 'quantity_available'):
+        if hasattr(product, "quantity_available"):
             if product.quantity_available >= required_quantity:
                 product.quantity_available -= required_quantity
             else:
@@ -45,8 +46,12 @@ async def create_simple_order(db: AsyncSession, order_email: str, phone: str, ad
 
         total_price += product.price * Decimal(required_quantity)
 
-        order_item = OrderItem(product_id=product.product_id, quantity=required_quantity,
-                               price_per_unit=product.price, total=product.price * Decimal(required_quantity))
+        order_item = OrderItem(
+            product_id=product.product_id,
+            quantity=required_quantity,
+            price_per_unit=product.price,
+            total=product.price * Decimal(required_quantity),
+        )
         order_items.append(order_item)
 
     try:
@@ -54,7 +59,7 @@ async def create_simple_order(db: AsyncSession, order_email: str, phone: str, ad
             user_id=user_id,
             order_email=order_email,
             total_price=total_price,
-            address=address
+            address=address,
         )
         db.add(order)
         await db.flush()
@@ -66,12 +71,10 @@ async def create_simple_order(db: AsyncSession, order_email: str, phone: str, ad
         await db.delete(cart)
         await db.commit()
         await db.refresh(order)
-        print(f"Заказ создан успешно! ID: {order.order_id}")
+        log.info("Создан заказ id=%s для пользователя id=%s", order.order_id, user_id)
         return order
 
-    except Exception as e:
-        print(f"Ошибка при создании заказа: {e}")
-        import traceback
-        traceback.print_exc()
+    except Exception:  # noqa: BLE001
+        log.exception("Ошибка при создании заказа")
         await db.rollback()
         raise

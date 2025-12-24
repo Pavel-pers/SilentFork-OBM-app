@@ -1,0 +1,49 @@
+.page-center {
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
+    background-color: #bfa6d0;
+    border-bottom: 4px solid #7e3e9c;
+    gap: 32px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #151e26;
+}
+
+.header nav {
+    display: flex;
+    gap: 20px;
+}
+
+.header nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.header nav a:hover {
+    background-color: #9263b3;
+}
+
+.footer {
+    text-align: center;
+    padding: 3px 0;
+    background-color: #ededed;
+    border-top: 3px solid #dddddd;
+    color: #66278f;
+    font-size: 0.9rem;
+    margin-top: 70px;
+}

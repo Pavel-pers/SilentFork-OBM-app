@@ -14,6 +14,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property, Comparator
 from app.models.base import Base
 
 if TYPE_CHECKING:
@@ -50,13 +51,18 @@ class User(Base):
     orders: Mapped[list[Order]] = relationship(back_populates="user")
     cart: Mapped[Cart | None] = relationship(back_populates="user", uselist=False)
 
-    @property
+    @hybrid_property
     def first_name(self) -> str:
         """Расшифрованное имя"""
         from app.core.encryption import encryption_service
         return encryption_service.decrypt(self.encrypted_first_name)
 
-    @property
+    @first_name.setter
+    def first_name(self, value: str) -> None:
+        from app.core.encryption import encryption_service
+        self.encrypted_first_name = encryption_service.encrypt(value)
+
+    @hybrid_property
     def patronymic(self) -> Optional[str]:
         """Расшифрованное отчество"""
         if not self.encrypted_patronymic:
@@ -64,23 +70,54 @@ class User(Base):
         from app.core.encryption import encryption_service
         return encryption_service.decrypt(self.encrypted_patronymic)
 
-    @property
+    @patronymic.setter
+    def patronymic(self, value: Optional[str]) -> None:
+        from app.core.encryption import encryption_service
+        self.encrypted_patronymic = encryption_service.encrypt(value) if value else None
+
+    @hybrid_property
     def last_name(self) -> str:
         """Расшифрованная фамилия"""
         from app.core.encryption import encryption_service
         return encryption_service.decrypt(self.encrypted_last_name)
 
-    @property
+    @last_name.setter
+    def last_name(self, value: str) -> None:
+        from app.core.encryption import encryption_service
+        self.encrypted_last_name = encryption_service.encrypt(value)
+
+    @hybrid_property
     def phone(self) -> str:
         """Расшифрованный телефон"""
         from app.core.encryption import encryption_service
         return encryption_service.decrypt(self.encrypted_phone)
 
-    @property
+    @phone.setter
+    def phone(self, value: str) -> None:
+        from app.core.encryption import encryption_service
+        self.encrypted_phone = encryption_service.encrypt(value)
+
+    @hybrid_property
     def email(self) -> str:
         """Расшифрованный email"""
         from app.core.encryption import encryption_service
         return encryption_service.decrypt(self.encrypted_email)
+
+    @email.setter
+    def email(self, value: str) -> None:
+        from app.core.encryption import encryption_service
+        self.encrypted_email = encryption_service.encrypt(value)
+        self.email_hash = encryption_service.hash_email(value)
+
+    @email.comparator
+    def email(cls):
+        from app.core.encryption import encryption_service
+
+        class EmailComparator(Comparator):
+            def __eq__(self, other):
+                return cls.email_hash == encryption_service.hash_email(other)
+
+        return EmailComparator(cls.email_hash)
 
     @classmethod
     def create_with_encryption(

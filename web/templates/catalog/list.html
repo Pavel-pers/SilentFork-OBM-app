@@ -25,13 +25,30 @@
 
         <div class="product-body">
             <h4 class="product-title">{{ product.name }}</h4>
-            {% if product.dimensions %}
-            <p class="product-manufacturer"><strong>Размеры:</strong> {{ product.dimensions }}</p>
-            {% endif %}
-            <p class="product-manufacturer"><strong>Производитель:</strong> {{ product.manufacturer }}</p>
-            <p class="product-price"><strong>Цена:</strong> {{ product.price }} руб</p>
-            <p class="product-unit"><strong>Единица измерения:</strong> {{ product.unit }}</p>
-            <p class="product-stock"><strong>В наличии:</strong> {{ product.quantity_available }} </p>
+            <div class="product-meta">
+                {% if product.dimensions %}
+                <div class="product-detail-row">
+                    <span class="product-detail-label">Размеры</span>
+                    <span class="product-detail-value">{{ product.dimensions }}</span>
+                </div>
+                {% endif %}
+                <div class="product-detail-row">
+                    <span class="product-detail-label">Производитель</span>
+                    <span class="product-detail-value">{{ product.manufacturer }}</span>
+                </div>
+                <div class="product-detail-row">
+                    <span class="product-detail-label">Цена</span>
+                    <span class="product-detail-value">{{ product.price }} руб</span>
+                </div>
+                <div class="product-detail-row">
+                    <span class="product-detail-label">Ед. измерения</span>
+                    <span class="product-detail-value">{{ product.unit }}</span>
+                </div>
+                <div class="product-detail-row">
+                    <span class="product-detail-label">В наличии</span>
+                    <span class="product-detail-value">{{ product.quantity_available }}</span>
+                </div>
+            </div>
 
             <div class="product-controls">
                 <label><strong>Количество:</strong></label>

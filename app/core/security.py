@@ -6,12 +6,26 @@ from starlette.responses import Response
 from app.core.settings import settings
 
 
+class _PasswordBackend:
+    """Обертка над bcrypt для удобства патчинга в тестах."""
+
+    @staticmethod
+    def hash(password_bytes: bytes) -> bytes:
+        return bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+
+    @staticmethod
+    def verify(password_bytes: bytes, hashed: bytes) -> bool:
+        return bcrypt.checkpw(password_bytes, hashed)
+
+
+_pwd = _PasswordBackend()
+
+
 def hash_password(password: str) -> str:
     password_bytes = password.encode("utf-8")
     if len(password_bytes) > 72:
         password_bytes = password_bytes[:72]
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password_bytes, salt)
+    hashed = _pwd.hash(password_bytes)
     return hashed.decode("utf-8")
 
 
@@ -20,7 +34,7 @@ def verify_password(password: str, password_hash: str) -> bool:
         password_bytes = password.encode("utf-8")
         if len(password_bytes) > 72:
             password_bytes = password_bytes[:72]
-        return bcrypt.checkpw(password_bytes, password_hash.encode("utf-8"))
+        return _pwd.verify(password_bytes, password_hash.encode("utf-8"))
     except Exception:
         return False
 
